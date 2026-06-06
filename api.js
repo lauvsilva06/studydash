@@ -124,3 +124,31 @@ export async function fetchTodayStats() {
   const rows = await req('GET', 'today_pomodoro');
   return rows[0] ?? { session_count: 0, total_minutes: 0 };
 }
+
+// ── MÉTRICAS ──────────────────────────────────────────────
+
+/** Tempo total por matéria (all time) */
+export async function fetchMetricsBySubject() {
+  return req('GET', 'metrics_by_subject?order=total_minutes.desc');
+}
+
+/** Atividade diária dos últimos 14 dias */
+export async function fetchMetricsDaily() {
+  return req('GET', 'metrics_daily?order=session_date.asc');
+}
+
+/** Tempo por matéria nos últimos 7 dias */
+export async function fetchMetricsWeeklyBySubject() {
+  return req('GET', 'metrics_weekly_by_subject?order=minutes_this_week.desc');
+}
+
+/** Últimas 30 sessões para o histórico */
+export async function fetchRecentSessions() {
+  return req('GET', 'pomodoro_sessions?order=created_at.desc&limit=30');
+}
+
+/** Dias estudados nos últimos 30 dias */
+export async function fetchStreak() {
+  const rows = await req('GET', 'study_streak');
+  return rows[0]?.streak_days ?? 0;
+}
