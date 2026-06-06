@@ -155,6 +155,39 @@ select{width:100%;background:var(--bg-base);color:var(--text-main);border:1px so
 .toast-msg{color:var(--text-soft);font-size:0.8rem}
 @keyframes toast-in{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
 @keyframes toast-out{from{transform:translateX(0);opacity:1}to{transform:translateX(120%);opacity:0}}
+/* ── MÉTRICAS ── */
+.metrics-hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+.metric-hero-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:20px;text-align:center;position:relative;overflow:hidden;transition:transform 0.2s}
+.metric-hero-card:hover{transform:translateY(-2px)}
+.metric-hero-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--mc,var(--accent))}
+.metric-hero-icon{font-size:1.6rem;margin-bottom:8px}
+.metric-hero-val{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:700;letter-spacing:-1px;color:var(--mc,var(--accent))}
+.metric-hero-lbl{font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.5px;margin-top:4px}
+.metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:1100px){.metrics-grid{grid-template-columns:1fr}}
+.metric-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:22px}
+.metric-card-title{font-family:'Syne',sans-serif;font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.bar-chart{display:flex;flex-direction:column;gap:10px}
+.bar-row{display:flex;align-items:center;gap:10px}
+.bar-label{font-size:0.8rem;color:var(--text-soft);width:90px;flex-shrink:0;display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;background:rgba(255,255,255,0.05);border-radius:6px;height:10px;overflow:hidden}
+.bar-fill{height:100%;border-radius:6px;transition:width 0.7s cubic-bezier(0.4,0,0.2,1)}
+.bar-value{font-size:0.78rem;color:var(--text-muted);width:44px;text-align:right;flex-shrink:0}
+.day-chart{display:flex;align-items:flex-end;gap:6px;height:100px;padding-top:10px}
+.day-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.day-bar-wrap{flex:1;width:100%;display:flex;align-items:flex-end}
+.day-bar{width:100%;border-radius:4px 4px 0 0;min-height:2px;transition:height 0.6s cubic-bezier(0.4,0,0.2,1)}
+.day-lbl{font-size:0.65rem;color:var(--text-muted);text-align:center}
+.day-val{font-size:0.65rem;color:var(--text-soft)}
+.sessions-list{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto}
+.session-row{display:flex;align-items:center;gap:12px;padding:10px 12px;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid var(--border)}
+.session-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.session-info{flex:1}
+.session-subject{font-size:0.875rem;font-weight:500}
+.session-date{font-size:0.75rem;color:var(--text-muted);margin-top:2px}
+.session-dur{font-family:'Syne',sans-serif;font-size:0.875rem;font-weight:700;color:var(--accent)}
+.empty-state{text-align:center;padding:32px;color:var(--text-muted);font-size:0.875rem}
+.empty-state .empty-icon{font-size:2rem;margin-bottom:8px}
 </style>
 </head>
 <body>
@@ -179,6 +212,9 @@ select{width:100%;background:var(--bg-base);color:var(--text-main);border:1px so
     </li>
     <li class="nav-item" data-nav="cronograma" onclick="navigate('cronograma')">
       <span class="nav-icon">⊟</span><span class="menu-text">Cronograma</span>
+    </li>
+    <li class="nav-item" data-nav="metricas" onclick="navigate('metricas')">
+      <span class="nav-icon">↗</span><span class="menu-text">Métricas</span>
     </li>
   </ul>
   <div class="nav-section-label">Disciplinas</div>
@@ -240,6 +276,39 @@ select{width:100%;background:var(--bg-base);color:var(--text-main);border:1px so
   <div class="view" id="view-subject">
     <div id="subject-detail-content"></div>
   </div>
+
+  <!-- MÉTRICAS -->
+  <div class="view" id="view-metricas">
+    <div class="header-top">
+      <div><h1>Métricas de <span>Estudo</span></h1></div>
+      <div class="current-date-pill" id="current-date-3"></div>
+    </div>
+    <!-- Hero stats -->
+    <div class="metrics-hero" id="metrics-hero"></div>
+    <!-- Gráficos -->
+    <div class="metrics-grid">
+      <!-- Tempo por matéria -->
+      <div class="metric-card">
+        <div class="metric-card-title">⏱ Tempo total por matéria</div>
+        <div class="bar-chart" id="chart-by-subject"></div>
+      </div>
+      <!-- Últimos 14 dias -->
+      <div class="metric-card">
+        <div class="metric-card-title">📅 Atividade — últimos 14 dias</div>
+        <div class="day-chart" id="chart-daily"></div>
+      </div>
+      <!-- Esta semana por matéria -->
+      <div class="metric-card">
+        <div class="metric-card-title">🗓 Esta semana por matéria</div>
+        <div class="bar-chart" id="chart-weekly-subject"></div>
+      </div>
+      <!-- Histórico de sessões -->
+      <div class="metric-card">
+        <div class="metric-card-title">🔥 Histórico de sessões</div>
+        <div class="sessions-list" id="sessions-list"></div>
+      </div>
+    </div>
+  </div>
 </main>
 
 <aside class="sidebar-right">
@@ -289,7 +358,12 @@ import {
   fetchScheduleFocus,
   updateScheduleFocus,
   saveSession,
-  fetchTodayStats
+  fetchTodayStats,
+  fetchMetricsBySubject,
+  fetchMetricsDaily,
+  fetchMetricsWeeklyBySubject,
+  fetchRecentSessions,
+  fetchStreak
 } from './api.js';
 
 // ── Metadados visuais (cores/ícones — não vão ao banco) ──
@@ -370,16 +444,16 @@ window.navigate = async function(view, subjectId) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
 
-  if (view === 'dashboard' || view === 'cronograma') {
+  if (view === 'dashboard' || view === 'cronograma' || view === 'metricas') {
     document.getElementById('view-'+view).classList.add('active');
     const el = document.querySelector(`[data-nav="${view}"]`);
     if (el) el.classList.add('active');
     if (view === 'dashboard') {
-      // Recarrega stats e progresso ao voltar
       const stats = await fetchTodayStats().catch(()=>null);
       if (stats) updateStatsDisplay(stats);
       renderDashboardCards();
     }
+    if (view === 'metricas') await renderMetrics();
   } else if (view === 'subject' && subjectId) {
     document.getElementById('view-subject').classList.add('active');
     document.getElementById('view-subject').scrollTop = 0;
@@ -709,6 +783,155 @@ window.focusKeydown = function(e, day) {
     document.getElementById('focus-span-'+day).style.display  = '';
   }
 };
+
+// ══════════════════════════════════════════
+//  MÉTRICAS
+// ══════════════════════════════════════════
+async function renderMetrics() {
+  document.getElementById('current-date-3').textContent =
+    todayDate.toLocaleDateString('pt-BR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  try {
+    const [bySubject, daily, weeklySubject, sessions, streak] = await Promise.all([
+      fetchMetricsBySubject(),
+      fetchMetricsDaily(),
+      fetchMetricsWeeklyBySubject(),
+      fetchRecentSessions(),
+      fetchStreak()
+    ]);
+
+    renderMetricsHero(bySubject, streak);
+    renderChartBySubject(bySubject);
+    renderChartDaily(daily);
+    renderChartWeeklySubject(weeklySubject);
+    renderSessionsList(sessions);
+  } catch(e) {
+    console.error(e);
+    showToast('❌ Erro','Não foi possível carregar as métricas.','error');
+  }
+}
+
+function renderMetricsHero(bySubject, streak) {
+  const totalMins     = bySubject.reduce((s,r)=>s+Number(r.total_minutes),0);
+  const totalSessions = bySubject.reduce((s,r)=>s+Number(r.total_sessions),0);
+  const h = Math.floor(totalMins/60), m = totalMins%60;
+  const topSubject    = bySubject[0];
+
+  document.getElementById('metrics-hero').innerHTML = `
+    <div class="metric-hero-card" style="--mc:var(--accent)">
+      <div class="metric-hero-icon">⏱</div>
+      <div class="metric-hero-val">${h}h${m>0?` ${m}m`:''}</div>
+      <div class="metric-hero-lbl">Tempo total estudado</div>
+    </div>
+    <div class="metric-hero-card" style="--mc:var(--info)">
+      <div class="metric-hero-icon">🔥</div>
+      <div class="metric-hero-val">${totalSessions}</div>
+      <div class="metric-hero-lbl">Sessões concluídas</div>
+    </div>
+    <div class="metric-hero-card" style="--mc:var(--warning)">
+      <div class="metric-hero-icon">📅</div>
+      <div class="metric-hero-val">${streak}</div>
+      <div class="metric-hero-lbl">Dias estudados (30d)</div>
+    </div>
+    <div class="metric-hero-card" style="--mc:${topSubject ? subjectColors[topSubject.id]||topSubject.color : 'var(--accent)'}">
+      <div class="metric-hero-icon">${topSubject ? subjectMeta[topSubject.id]?.icon||topSubject.icon : '—'}</div>
+      <div class="metric-hero-val" style="font-size:1.2rem">${topSubject ? topSubject.short_name : '—'}</div>
+      <div class="metric-hero-lbl">Matéria mais estudada</div>
+    </div>`;
+}
+
+function renderChartBySubject(data) {
+  const max = Math.max(...data.map(r=>Number(r.total_minutes)), 1);
+  const container = document.getElementById('chart-by-subject');
+  if (!data.length) { container.innerHTML = emptyState('Nenhuma sessão registrada ainda.'); return; }
+  container.innerHTML = data.map(r => {
+    const mins = Number(r.total_minutes);
+    const pct  = Math.round(mins/max*100);
+    const h    = Math.floor(mins/60), m = mins%60;
+    const color = subjectColors[r.id] || r.color;
+    return `
+      <div class="bar-row">
+        <div class="bar-label">${subjectMeta[r.id]?.icon||r.icon} ${r.short_name}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div>
+        <div class="bar-value">${h>0?h+'h':''}${m>0?` ${m}m`:''}</div>
+      </div>`;
+  }).join('');
+}
+
+function renderChartDaily(data) {
+  const container = document.getElementById('chart-daily');
+  // Gera últimos 14 dias
+  const days = [];
+  for (let i=13; i>=0; i--) {
+    const d = new Date(todayDate);
+    d.setDate(d.getDate()-i);
+    const key = d.toISOString().slice(0,10);
+    const row = data.find(r=>r.session_date===key);
+    days.push({
+      key,
+      label: d.toLocaleDateString('pt-BR',{weekday:'short'}).slice(0,3),
+      mins: row ? Number(row.total_minutes) : 0
+    });
+  }
+  const max = Math.max(...days.map(d=>d.mins), 1);
+  container.innerHTML = days.map(d => {
+    const pct = Math.round(d.mins/max*100);
+    const isToday = d.key === todayDate.toISOString().slice(0,10);
+    const color = isToday ? 'var(--accent)' : 'var(--info)';
+    return `
+      <div class="day-col">
+        <div class="day-val">${d.mins>0?Math.round(d.mins)+'m':''}</div>
+        <div class="day-bar-wrap">
+          <div class="day-bar" style="height:${pct}%;background:${color};opacity:${d.mins>0?1:0.15}"></div>
+        </div>
+        <div class="day-lbl" style="color:${isToday?'var(--accent)':'var(--text-muted)'}">${d.label}</div>
+      </div>`;
+  }).join('');
+}
+
+function renderChartWeeklySubject(data) {
+  const max = Math.max(...data.map(r=>Number(r.minutes_this_week)), 1);
+  const container = document.getElementById('chart-weekly-subject');
+  const withData = data.filter(r=>Number(r.minutes_this_week)>0);
+  if (!withData.length) { container.innerHTML = emptyState('Nenhuma sessão esta semana.'); return; }
+  container.innerHTML = withData.map(r => {
+    const mins  = Number(r.minutes_this_week);
+    const pct   = Math.round(mins/max*100);
+    const h     = Math.floor(mins/60), m = mins%60;
+    const color = subjectColors[r.id] || r.color;
+    return `
+      <div class="bar-row">
+        <div class="bar-label">${subjectMeta[r.id]?.icon||r.icon} ${r.short_name}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div>
+        <div class="bar-value">${h>0?h+'h':''}${m>0?` ${m}m`:''}</div>
+      </div>`;
+  }).join('');
+}
+
+function renderSessionsList(sessions) {
+  const container = document.getElementById('sessions-list');
+  if (!sessions.length) { container.innerHTML = emptyState('Nenhuma sessão registrada ainda.'); return; }
+  container.innerHTML = sessions.map(s => {
+    const color = subjectColors[s.subject_id] || '#888';
+    const meta  = subjectMeta[s.subject_id];
+    const date  = new Date(s.created_at);
+    const dateStr = date.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+    const timeStr = date.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    return `
+      <div class="session-row">
+        <div class="session-dot" style="background:${color}"></div>
+        <div class="session-info">
+          <div class="session-subject">${meta?.icon||''} ${meta?.shortName||s.subject_id}</div>
+          <div class="session-date">${dateStr} às ${timeStr}</div>
+        </div>
+        <div class="session-dur">${s.duration_min}min</div>
+      </div>`;
+  }).join('');
+}
+
+function emptyState(msg) {
+  return `<div class="empty-state"><div class="empty-icon">📭</div>${msg}</div>`;
+}
 
 // ══════════════════════════════════════════
 //  POMODORO
