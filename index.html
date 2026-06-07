@@ -335,6 +335,7 @@ select{width:100%;background:var(--bg-base);color:var(--text-main);border:1px so
       <option value="extensao">Extensionista</option>
       <option value="linux">Linux</option>
       <option value="artigo">Artigo Wireless</option>
+      <option value="extras">Conteúdos Extras</option>
     </select>
     <button class="btn" id="btn-start" onclick="toggleTimer()">Iniciar Estudo</button>
     <button class="btn btn-danger" onclick="resetTimer()">↺ Reiniciar Ciclo</button>
@@ -369,7 +370,8 @@ import {
 // ── Metadados visuais (cores/ícones — não vão ao banco) ──
 const subjectColors = {
   faculdade:'#4c9ff0', extensao:'#a78bfa', hcia:'#2dd4a0',
-  ingles:'#fb923c',    linux:'#facc15',    artigo:'#f472b6'
+  ingles:'#fb923c',    linux:'#facc15',    artigo:'#f472b6',
+  extras:'#34d399'
 };
 const subjectMeta = {
   faculdade:{icon:'🎓',shortName:'Faculdade'},
@@ -377,7 +379,8 @@ const subjectMeta = {
   hcia:     {icon:'🌐',shortName:'HCIA-Datacom'},
   ingles:   {icon:'💬',shortName:'Inglês'},
   linux:    {icon:'🐧',shortName:'Linux'},
-  artigo:   {icon:'📡',shortName:'Artigo Wireless'}
+  artigo:   {icon:'📡',shortName:'Artigo Wireless'},
+  extras:   {icon:'🧩',shortName:'Conteúdos Extras'}
 };
 
 // ── Estrutura do cronograma ──
